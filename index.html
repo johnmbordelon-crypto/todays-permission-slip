@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f3efe8" />
+  <meta name="description" content="A gentle daily permission slip: one thing to release and one thing to enjoy." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Permission Slip" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+  <title>Today's Permission Slip</title>
+  <style>
+    :root {
+      --bg: #f3efe8;
+      --card: #fffdf9;
+      --ink: #282522;
+      --muted: #6c665f;
+      --accent: #5f6f52;
+      --accent-dark: #45523c;
+      --soft-red: #f4e3df;
+      --soft-green: #e5eee0;
+      --border: #ddd5ca;
+      --shadow: 0 18px 45px rgba(58, 48, 38, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, #fff8e9 0, transparent 38%),
+        radial-gradient(circle at bottom right, #dfe9dc 0, transparent 40%),
+        var(--bg);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    main {
+      width: min(760px, 100%);
+    }
+
+    .shell {
+      background: rgba(255, 253, 249, 0.92);
+      border: 1px solid rgba(221, 213, 202, 0.9);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(8px);
+    }
+
+    header {
+      padding: 34px 30px 24px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      line-height: 1.02;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .date {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: #eee8df;
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    .intro {
+      text-align: center;
+      margin: 0 auto 24px;
+      color: var(--muted);
+      max-width: 580px;
+      line-height: 1.55;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 26px;
+    }
+
+    button {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 13px 20px;
+      font: inherit;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:active { transform: translateY(0); }
+
+    .primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .primary:hover { background: var(--accent-dark); }
+
+    .secondary {
+      background: #ece7df;
+      color: var(--ink);
+    }
+
+    .results {
+      display: grid;
+      gap: 18px;
+    }
+
+    .result-card {
+      border-radius: 22px;
+      padding: 22px;
+      border: 1px solid var(--border);
+      min-height: 150px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .not-allowed { background: var(--soft-red); }
+    .want-you-to { background: var(--soft-green); }
+
+    .label {
+      margin: 0 0 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.75rem;
+      font-weight: 900;
+      color: var(--muted);
+    }
+
+    .choice {
+      margin: 0;
+      font-size: clamp(1.45rem, 4vw, 2.2rem);
+      line-height: 1.18;
+      letter-spacing: -0.025em;
+      font-weight: 900;
+    }
+
+    .hidden-choice {
+      color: var(--muted);
+      font-size: 1.05rem;
+      font-weight: 700;
+    }
+
+    .note {
+      margin: 24px 0 0;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    .toast {
+      margin: 14px auto 0;
+      min-height: 24px;
+      text-align: center;
+      color: var(--accent-dark);
+      font-weight: 800;
+    }
+
+    footer {
+      padding: 18px 28px 24px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    @media (min-width: 650px) {
+      .results { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 12px; }
+      header { padding: 28px 20px 20px; }
+      .content { padding: 20px; }
+      .result-card { min-height: 170px; }
+      button { width: 100%; }
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .shell { box-shadow: none; border: 0; }
+      .button-row, .intro, footer, .toast { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="shell">
+      <header>
+        <h1>Today's Permission Slip</h1>
+        <p class="subtitle">One thing to release. One thing to enjoy.</p>
+        <div class="date" id="dateLabel"></div>
+      </header>
+
+      <div class="content">
+        <p class="intro">
+          Today's selections are tied to the date, so they stay the same all day.
+          No bargaining, no rerolling, no guilt.
+        </p>
+
+        <div class="button-row">
+          <button class="primary" id="revealButton">Reveal today's plan</button>
+          <button class="secondary" id="copyButton" hidden>Copy results</button>
+        </div>
+
+        <div class="results" aria-live="polite">
+          <article class="result-card not-allowed">
+            <p class="label">Today you are not allowed to</p>
+            <p class="choice hidden-choice" id="notAllowedChoice">Waiting to be revealed</p>
+          </article>
+
+          <article class="result-card want-you-to">
+            <p class="label">Today I want you to</p>
+            <p class="choice hidden-choice" id="wantChoice">Waiting to be revealed</p>
+          </article>
+        </div>
+
+        <div class="toast" id="toast" role="status"></div>
+
+        <p class="note">
+          Rest is not something you have to earn. This is a boundary for the day,
+          not a judgment about your worth or effort.
+        </p>
+      </div>
+
+      <footer>
+        Made as a small daily ritual for John.
+      </footer>
+    </section>
+  </main>
+
+  <script>
+    const notAllowed = [
+      "Do any coursework",
+      "Look for or apply for any jobs",
+      "Open your unemployment benefits portal",
+      "Do any laundry, dishes, or clean litter boxes",
+      "Open social media or doomscroll",
+      "Eat any junk food"
+    ];
+
+    const wantYouTo = [
+      "Take a nap",
+      "Take a hot bath",
+      "Play The Sims",
+      "Go for a drive or a walk",
+      "Watch some TV or a movie",
+      "Prepare a good meal"
+    ];
+
+    const dateLabel = document.getElementById("dateLabel");
+    const revealButton = document.getElementById("revealButton");
+    const copyButton = document.getElementById("copyButton");
+    const notAllowedChoice = document.getElementById("notAllowedChoice");
+    const wantChoice = document.getElementById("wantChoice");
+    const toast = document.getElementById("toast");
+
+    const today = new Date();
+    dateLabel.textContent = today.toLocaleDateString(undefined, {
+      weekday: "long",
+      month: "long",
+      day: "numeric",
+      year: "numeric"
+    });
+
+    function hashString(text) {
+      let hash = 2166136261;
+      for (let i = 0; i < text.length; i++) {
+        hash ^= text.charCodeAt(i);
+        hash = Math.imul(hash, 16777619);
+      }
+      return hash >>> 0;
+    }
+
+    function seededIndex(seedText, length) {
+      return hashString(seedText) % length;
+    }
+
+    const dateKey = [
+      today.getFullYear(),
+      String(today.getMonth() + 1).padStart(2, "0"),
+      String(today.getDate()).padStart(2, "0")
+    ].join("-");
+
+    const todaysNotAllowed =
+      notAllowed[seededIndex(dateKey + "-not-allowed", notAllowed.length)];
+
+    const todaysWant =
+      wantYouTo[seededIndex(dateKey + "-want", wantYouTo.length)];
+
+    function reveal() {
+      notAllowedChoice.textContent = todaysNotAllowed;
+      wantChoice.textContent = todaysWant;
+      notAllowedChoice.classList.remove("hidden-choice");
+      wantChoice.classList.remove("hidden-choice");
+      revealButton.textContent = "Today's plan is set";
+      revealButton.disabled = true;
+      revealButton.style.opacity = "0.7";
+      revealButton.style.cursor = "default";
+      copyButton.hidden = false;
+      toast.textContent = "";
+    }
+
+    async function copyResults() {
+      const message =
+`Today's Permission Slip — ${dateLabel.textContent}
+
+Today you are not allowed to:
+${todaysNotAllowed}
+
+Today I want you to:
+${todaysWant}`;
+
+      try {
+        await navigator.clipboard.writeText(message);
+        toast.textContent = "Copied — ready to send.";
+      } catch {
+        const textarea = document.createElement("textarea");
+        textarea.value = message;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        textarea.remove();
+        toast.textContent = "Copied — ready to send.";
+      }
+    }
+
+    revealButton.addEventListener("click", reveal);
+    copyButton.addEventListener("click", copyResults);
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js").catch((error) => {
+          console.error("Service worker registration failed:", error);
+        });
+      });
+    }
+
+  </script>
+</body>
+</html>
