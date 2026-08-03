@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#f3efe8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#eef3ea" />
   <meta name="description" content="A gentle daily permission slip: one thing to release and one thing to enjoy." />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
@@ -13,88 +13,103 @@
   <title>Today's Permission Slip</title>
   <style>
     :root {
-      --bg: #f3efe8;
+      --bg: #eef3ea;
       --card: #fffdf9;
-      --ink: #282522;
-      --muted: #6c665f;
-      --accent: #5f6f52;
-      --accent-dark: #45523c;
-      --soft-red: #f4e3df;
-      --soft-green: #e5eee0;
-      --border: #ddd5ca;
-      --shadow: 0 18px 45px rgba(58, 48, 38, 0.12);
+      --ink: #253026;
+      --muted: #687168;
+      --accent: #5d7458;
+      --accent-dark: #425640;
+      --soft-red: #f5e6e1;
+      --soft-green: #e3eee0;
+      --border: #d8dfd4;
+      --shadow: 0 24px 60px rgba(46, 63, 46, 0.14);
     }
 
     * { box-sizing: border-box; }
 
+    html, body { min-height: 100%; }
+
     body {
       margin: 0;
-      min-height: 100vh;
       font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(circle at top left, #fff8e9 0, transparent 38%),
-        radial-gradient(circle at bottom right, #dfe9dc 0, transparent 40%),
+        radial-gradient(circle at 15% 10%, #fff8e9 0, transparent 33%),
+        radial-gradient(circle at 85% 90%, #dce9d8 0, transparent 36%),
         var(--bg);
       display: grid;
       place-items: center;
-      padding: 24px;
+      padding: max(18px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom));
     }
 
-    main {
-      width: min(760px, 100%);
-    }
+    main { width: min(760px, 100%); }
 
     .shell {
-      background: rgba(255, 253, 249, 0.92);
-      border: 1px solid rgba(221, 213, 202, 0.9);
-      border-radius: 28px;
+      background: rgba(255, 253, 249, 0.94);
+      border: 1px solid rgba(216, 223, 212, 0.95);
+      border-radius: 30px;
       box-shadow: var(--shadow);
       overflow: hidden;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
     }
 
     header {
-      padding: 34px 30px 24px;
+      padding: 34px 28px 24px;
       text-align: center;
       border-bottom: 1px solid var(--border);
     }
 
+    .eyebrow {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-size: 0.76rem;
+    }
+
     h1 {
-      margin: 0 0 8px;
-      font-size: clamp(2rem, 5vw, 3.4rem);
-      line-height: 1.02;
-      letter-spacing: -0.04em;
+      margin: 0 0 10px;
+      font-size: clamp(2.15rem, 7vw, 3.7rem);
+      line-height: 0.98;
+      letter-spacing: -0.05em;
     }
 
     .subtitle {
       margin: 0;
       color: var(--muted);
-      font-size: 1rem;
-      line-height: 1.5;
+      line-height: 1.55;
     }
 
     .date {
       display: inline-block;
-      margin-top: 14px;
-      padding: 7px 12px;
+      margin-top: 15px;
+      padding: 8px 13px;
       border-radius: 999px;
-      background: #eee8df;
+      background: #ebece5;
       color: var(--muted);
       font-size: 0.9rem;
-      font-weight: 700;
+      font-weight: 800;
     }
 
-    .content {
-      padding: 28px;
-    }
+    .content { padding: 27px; }
 
-    .intro {
+    .opening {
       text-align: center;
+      max-width: 590px;
       margin: 0 auto 24px;
+    }
+
+    .opening strong {
+      display: block;
+      font-size: 1.25rem;
+      margin-bottom: 8px;
+    }
+
+    .opening p {
       color: var(--muted);
-      max-width: 580px;
       line-height: 1.55;
+      margin: 0;
     }
 
     .button-row {
@@ -102,18 +117,18 @@
       gap: 12px;
       justify-content: center;
       flex-wrap: wrap;
-      margin-bottom: 26px;
+      margin: 22px 0 26px;
     }
 
     button {
       appearance: none;
       border: 0;
       border-radius: 999px;
-      padding: 13px 20px;
+      padding: 14px 21px;
       font: inherit;
-      font-weight: 800;
+      font-weight: 900;
       cursor: pointer;
-      transition: transform 0.15s ease, background 0.15s ease;
+      transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
     }
 
     button:hover { transform: translateY(-1px); }
@@ -127,20 +142,30 @@
     .primary:hover { background: var(--accent-dark); }
 
     .secondary {
-      background: #ece7df;
+      background: #ece9e2;
       color: var(--ink);
     }
 
     .results {
       display: grid;
       gap: 18px;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.45s ease, transform 0.45s ease;
+      pointer-events: none;
+    }
+
+    .results.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
     }
 
     .result-card {
-      border-radius: 22px;
-      padding: 22px;
+      border-radius: 23px;
+      padding: 23px;
       border: 1px solid var(--border);
-      min-height: 150px;
+      min-height: 165px;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -150,7 +175,7 @@
     .want-you-to { background: var(--soft-green); }
 
     .label {
-      margin: 0 0 10px;
+      margin: 0 0 11px;
       text-transform: uppercase;
       letter-spacing: 0.12em;
       font-size: 0.75rem;
@@ -160,32 +185,68 @@
 
     .choice {
       margin: 0;
-      font-size: clamp(1.45rem, 4vw, 2.2rem);
-      line-height: 1.18;
-      letter-spacing: -0.025em;
-      font-weight: 900;
+      font-size: clamp(1.5rem, 5vw, 2.25rem);
+      line-height: 1.16;
+      letter-spacing: -0.03em;
+      font-weight: 950;
     }
 
-    .hidden-choice {
-      color: var(--muted);
-      font-size: 1.05rem;
-      font-weight: 700;
-    }
-
-    .note {
-      margin: 24px 0 0;
+    .accept-panel {
+      display: none;
+      margin-top: 22px;
+      padding: 22px;
+      border-radius: 22px;
+      background: #f1f4ed;
+      border: 1px solid var(--border);
       text-align: center;
+    }
+
+    .accept-panel.visible { display: block; }
+
+    .accept-panel p {
+      margin: 0 0 15px;
       color: var(--muted);
       line-height: 1.5;
-      font-size: 0.95rem;
+    }
+
+    .accepted {
+      display: none;
+      margin-top: 22px;
+      padding: 24px;
+      border-radius: 22px;
+      background: var(--accent);
+      color: white;
+      text-align: center;
+      animation: settle 0.4s ease both;
+    }
+
+    .accepted.visible { display: block; }
+
+    .accepted h2 {
+      margin: 0 0 8px;
+      font-size: 1.65rem;
+    }
+
+    .accepted p {
+      margin: 0;
+      line-height: 1.5;
+      opacity: 0.94;
     }
 
     .toast {
-      margin: 14px auto 0;
       min-height: 24px;
+      margin-top: 13px;
       text-align: center;
       color: var(--accent-dark);
       font-weight: 800;
+    }
+
+    .fine-print {
+      margin: 23px 0 0;
+      color: var(--muted);
+      line-height: 1.5;
+      text-align: center;
+      font-size: 0.93rem;
     }
 
     footer {
@@ -195,22 +256,21 @@
       font-size: 0.85rem;
     }
 
+    @keyframes settle {
+      from { opacity: 0; transform: scale(0.98); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
     @media (min-width: 650px) {
       .results { grid-template-columns: 1fr 1fr; }
     }
 
     @media (max-width: 480px) {
-      body { padding: 12px; }
-      header { padding: 28px 20px 20px; }
+      body { padding-left: 12px; padding-right: 12px; }
+      header { padding: 29px 20px 21px; }
       .content { padding: 20px; }
-      .result-card { min-height: 170px; }
+      .result-card { min-height: 175px; }
       button { width: 100%; }
-    }
-
-    @media print {
-      body { background: white; padding: 0; }
-      .shell { box-shadow: none; border: 0; }
-      .button-row, .intro, footer, .toast { display: none; }
     }
   </style>
 </head>
@@ -218,45 +278,55 @@
   <main>
     <section class="shell">
       <header>
+        <p class="eyebrow">A daily boundary</p>
         <h1>Today's Permission Slip</h1>
         <p class="subtitle">One thing to release. One thing to enjoy.</p>
         <div class="date" id="dateLabel"></div>
       </header>
 
       <div class="content">
-        <p class="intro">
-          Today's selections are tied to the date, so they stay the same all day.
-          No bargaining, no rerolling, no guilt.
-        </p>
+        <section class="opening" id="opening">
+          <strong>You do not have to earn rest.</strong>
+          <p>Today's plan has already been decided. Once revealed, there are no rerolls and no negotiations.</p>
+        </section>
 
-        <div class="button-row">
-          <button class="primary" id="revealButton">Reveal today's plan</button>
-          <button class="secondary" id="copyButton" hidden>Copy results</button>
+        <div class="button-row" id="revealRow">
+          <button class="primary" id="revealButton">Reveal today's permission</button>
         </div>
 
-        <div class="results" aria-live="polite">
+        <section class="results" id="results" aria-live="polite">
           <article class="result-card not-allowed">
             <p class="label">Today you are not allowed to</p>
-            <p class="choice hidden-choice" id="notAllowedChoice">Waiting to be revealed</p>
+            <p class="choice" id="notAllowedChoice"></p>
           </article>
 
           <article class="result-card want-you-to">
             <p class="label">Today I want you to</p>
-            <p class="choice hidden-choice" id="wantChoice">Waiting to be revealed</p>
+            <p class="choice" id="wantChoice"></p>
           </article>
-        </div>
+        </section>
+
+        <section class="accept-panel" id="acceptPanel">
+          <p>Today's permission has been decided. Your only job now is to honor it.</p>
+          <div class="button-row">
+            <button class="primary" id="acceptButton">I accept today's permission</button>
+            <button class="secondary" id="copyButton">Copy for John</button>
+          </div>
+        </section>
+
+        <section class="accepted" id="acceptedPanel">
+          <h2>Permission accepted.</h2>
+          <p>Rest is part of the plan today. You are not falling behind by taking care of yourself.</p>
+        </section>
 
         <div class="toast" id="toast" role="status"></div>
 
-        <p class="note">
-          Rest is not something you have to earn. This is a boundary for the day,
-          not a judgment about your worth or effort.
+        <p class="fine-print">
+          The daily selections are tied to the date, so they remain the same all day on every device.
         </p>
       </div>
 
-      <footer>
-        Made as a small daily ritual for John.
-      </footer>
+      <footer>Made as a small daily ritual for John.</footer>
     </section>
   </main>
 
@@ -281,18 +351,24 @@
 
     const dateLabel = document.getElementById("dateLabel");
     const revealButton = document.getElementById("revealButton");
-    const copyButton = document.getElementById("copyButton");
+    const revealRow = document.getElementById("revealRow");
+    const results = document.getElementById("results");
     const notAllowedChoice = document.getElementById("notAllowedChoice");
     const wantChoice = document.getElementById("wantChoice");
+    const acceptPanel = document.getElementById("acceptPanel");
+    const acceptedPanel = document.getElementById("acceptedPanel");
+    const acceptButton = document.getElementById("acceptButton");
+    const copyButton = document.getElementById("copyButton");
     const toast = document.getElementById("toast");
 
     const today = new Date();
-    dateLabel.textContent = today.toLocaleDateString(undefined, {
+    const prettyDate = today.toLocaleDateString(undefined, {
       weekday: "long",
       month: "long",
       day: "numeric",
       year: "numeric"
     });
+    dateLabel.textContent = prettyDate;
 
     function hashString(text) {
       let hash = 2166136261;
@@ -315,32 +391,42 @@
 
     const todaysNotAllowed =
       notAllowed[seededIndex(dateKey + "-not-allowed", notAllowed.length)];
-
     const todaysWant =
       wantYouTo[seededIndex(dateKey + "-want", wantYouTo.length)];
 
-    function reveal() {
+    const revealedKey = `permission-revealed-${dateKey}`;
+    const acceptedKey = `permission-accepted-${dateKey}`;
+
+    function showResults() {
       notAllowedChoice.textContent = todaysNotAllowed;
       wantChoice.textContent = todaysWant;
-      notAllowedChoice.classList.remove("hidden-choice");
-      wantChoice.classList.remove("hidden-choice");
-      revealButton.textContent = "Today's plan is set";
-      revealButton.disabled = true;
-      revealButton.style.opacity = "0.7";
-      revealButton.style.cursor = "default";
-      copyButton.hidden = false;
-      toast.textContent = "";
+      results.classList.add("visible");
+      acceptPanel.classList.add("visible");
+      revealRow.style.display = "none";
+      localStorage.setItem(revealedKey, "true");
     }
 
-    async function copyResults() {
+    function showAccepted() {
+      showResults();
+      acceptPanel.classList.remove("visible");
+      acceptedPanel.classList.add("visible");
+      localStorage.setItem(acceptedKey, "true");
+    }
+
+    revealButton.addEventListener("click", showResults);
+    acceptButton.addEventListener("click", showAccepted);
+
+    copyButton.addEventListener("click", async () => {
       const message =
-`Today's Permission Slip — ${dateLabel.textContent}
+`Today's Permission Slip — ${prettyDate}
 
 Today you are not allowed to:
 ${todaysNotAllowed}
 
 Today I want you to:
-${todaysWant}`;
+${todaysWant}
+
+No rerolls. No negotiations.`;
 
       try {
         await navigator.clipboard.writeText(message);
@@ -354,10 +440,13 @@ ${todaysWant}`;
         textarea.remove();
         toast.textContent = "Copied — ready to send.";
       }
-    }
+    });
 
-    revealButton.addEventListener("click", reveal);
-    copyButton.addEventListener("click", copyResults);
+    if (localStorage.getItem(acceptedKey) === "true") {
+      showAccepted();
+    } else if (localStorage.getItem(revealedKey) === "true") {
+      showResults();
+    }
 
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
@@ -366,7 +455,6 @@ ${todaysWant}`;
         });
       });
     }
-
   </script>
 </body>
 </html>
