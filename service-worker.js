@@ -1,4 +1,4 @@
-const CACHE_NAME = "permission-slip-v1";
+const CACHE_NAME = "permission-slip-v2";
 const APP_SHELL = [
   "./",
   "./index.html",
