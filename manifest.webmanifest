@@ -1,6 +1,6 @@
 {
-  "name": "Today's Permission Slip",
-  "short_name": "Permission Slip",
+  "name": "Permission",
+  "short_name": "Permission",
   "description": "One thing to release. One thing to enjoy.",
   "id": "./",
   "start_url": "./",

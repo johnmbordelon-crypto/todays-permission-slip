@@ -3,326 +3,421 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#eef3ea" />
-  <meta name="description" content="A gentle daily permission slip: one thing to release and one thing to enjoy." />
+  <meta name="theme-color" content="#edf3ea" />
+  <meta name="description" content="A calming daily permission slip: one thing to release and one thing to enjoy." />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="Permission Slip" />
+  <meta name="apple-mobile-web-app-title" content="Permission" />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="icons/icon-192.png" />
-  <title>Today's Permission Slip</title>
+  <title>Permission</title>
+
   <style>
     :root {
-      --bg: #eef3ea;
-      --card: #fffdf9;
-      --ink: #253026;
-      --muted: #687168;
-      --accent: #5d7458;
-      --accent-dark: #425640;
-      --soft-red: #f5e6e1;
-      --soft-green: #e3eee0;
-      --border: #d8dfd4;
-      --shadow: 0 24px 60px rgba(46, 63, 46, 0.14);
+      --bg-1: #edf3ea;
+      --bg-2: #faf4e7;
+      --card: rgba(255, 253, 249, 0.92);
+      --ink: #223026;
+      --muted: #6a746b;
+      --accent: #607b5f;
+      --accent-dark: #425840;
+      --soft-red: #f5e7e2;
+      --soft-green: #e3efe0;
+      --border: rgba(213, 222, 211, 0.96);
+      --shadow: 0 24px 70px rgba(48, 64, 47, 0.16);
     }
 
     * { box-sizing: border-box; }
 
-    html, body { min-height: 100%; }
+    html, body {
+      min-height: 100%;
+      margin: 0;
+    }
 
     body {
-      margin: 0;
       font-family: ui-rounded, "SF Pro Rounded", "Segoe UI", system-ui, sans-serif;
       color: var(--ink);
       background:
-        radial-gradient(circle at 15% 10%, #fff8e9 0, transparent 33%),
-        radial-gradient(circle at 85% 90%, #dce9d8 0, transparent 36%),
-        var(--bg);
+        radial-gradient(circle at 12% 8%, var(--bg-2) 0, transparent 34%),
+        radial-gradient(circle at 88% 92%, var(--bg-1) 0, transparent 38%),
+        linear-gradient(160deg, var(--bg-1), var(--bg-2));
       display: grid;
       place-items: center;
-      padding: max(18px, env(safe-area-inset-top)) 18px max(22px, env(safe-area-inset-bottom));
+      padding: max(16px, env(safe-area-inset-top)) 14px max(22px, env(safe-area-inset-bottom));
+      transition: background 0.4s ease;
     }
 
-    main { width: min(760px, 100%); }
+    main {
+      width: min(760px, 100%);
+    }
 
-    .shell {
-      background: rgba(255, 253, 249, 0.94);
-      border: 1px solid rgba(216, 223, 212, 0.95);
-      border-radius: 30px;
-      box-shadow: var(--shadow);
+    .app-shell {
+      position: relative;
       overflow: hidden;
-      backdrop-filter: blur(10px);
+      border-radius: 32px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
     }
+
+    .ambient {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .orb {
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.28);
+      filter: blur(2px);
+    }
+
+    .orb.one { top: -110px; right: -90px; }
+    .orb.two { bottom: -130px; left: -100px; }
 
     header {
-      padding: 34px 28px 24px;
+      position: relative;
+      z-index: 1;
       text-align: center;
+      padding: 32px 24px 22px;
       border-bottom: 1px solid var(--border);
     }
 
-    .eyebrow {
-      margin: 0 0 10px;
-      color: var(--accent);
-      font-weight: 900;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      font-size: 0.76rem;
+    .app-name {
+      margin: 0 0 8px;
+      font-size: clamp(2.6rem, 9vw, 4.4rem);
+      line-height: 0.95;
+      letter-spacing: -0.055em;
+      font-weight: 950;
     }
 
-    h1 {
-      margin: 0 0 10px;
-      font-size: clamp(2.15rem, 7vw, 3.7rem);
-      line-height: 0.98;
-      letter-spacing: -0.05em;
-    }
-
-    .subtitle {
+    .tagline {
       margin: 0;
       color: var(--muted);
-      line-height: 1.55;
+      font-size: 1.03rem;
     }
 
-    .date {
+    .date-pill {
       display: inline-block;
       margin-top: 15px;
       padding: 8px 13px;
       border-radius: 999px;
-      background: #ebece5;
+      background: rgba(238, 239, 232, 0.94);
       color: var(--muted);
       font-size: 0.9rem;
-      font-weight: 800;
+      font-weight: 850;
     }
 
-    .content { padding: 27px; }
+    .content {
+      position: relative;
+      z-index: 1;
+      padding: 26px 22px 30px;
+    }
 
-    .opening {
+    .welcome {
       text-align: center;
-      max-width: 590px;
-      margin: 0 auto 24px;
+      margin-bottom: 22px;
     }
 
-    .opening strong {
-      display: block;
-      font-size: 1.25rem;
-      margin-bottom: 8px;
+    .welcome h2 {
+      margin: 0 0 9px;
+      font-size: clamp(1.55rem, 5vw, 2.15rem);
+      letter-spacing: -0.025em;
     }
 
-    .opening p {
+    .welcome p {
+      margin: 0 auto;
+      max-width: 560px;
       color: var(--muted);
       line-height: 1.55;
-      margin: 0;
     }
 
     .button-row {
       display: flex;
-      gap: 12px;
-      justify-content: center;
       flex-wrap: wrap;
-      margin: 22px 0 26px;
+      justify-content: center;
+      gap: 11px;
+      margin-top: 20px;
     }
 
     button {
       appearance: none;
       border: 0;
       border-radius: 999px;
-      padding: 14px 21px;
+      padding: 14px 20px;
       font: inherit;
       font-weight: 900;
       cursor: pointer;
-      transition: transform 0.15s ease, opacity 0.15s ease, background 0.15s ease;
+      transition: transform .15s ease, opacity .15s ease, background .15s ease;
     }
 
-    button:hover { transform: translateY(-1px); }
-    button:active { transform: translateY(0); }
+    button:active { transform: scale(0.985); }
 
     .primary {
       background: var(--accent);
       color: white;
+      min-width: min(100%, 340px);
     }
 
     .primary:hover { background: var(--accent-dark); }
 
     .secondary {
-      background: #ece9e2;
+      background: rgba(238, 235, 228, 0.96);
       color: var(--ink);
     }
 
-    .results {
-      display: grid;
-      gap: 18px;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.45s ease, transform 0.45s ease;
-      pointer-events: none;
+    .card-stage {
+      perspective: 1200px;
+      margin-top: 10px;
+      display: none;
     }
 
-    .results.visible {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
+    .card-stage.visible { display: block; }
+
+    .permission-card {
+      position: relative;
+      min-height: 390px;
+      transform-style: preserve-3d;
+      transition: transform .8s cubic-bezier(.2,.8,.2,1);
     }
 
-    .result-card {
-      border-radius: 23px;
-      padding: 23px;
+    .permission-card.flipped {
+      transform: rotateY(180deg);
+    }
+
+    .face {
+      position: absolute;
+      inset: 0;
+      backface-visibility: hidden;
+      border-radius: 26px;
       border: 1px solid var(--border);
-      min-height: 165px;
+      box-shadow: 0 16px 38px rgba(45, 58, 44, 0.11);
+      padding: 26px;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      text-align: center;
     }
 
-    .not-allowed { background: var(--soft-red); }
-    .want-you-to { background: var(--soft-green); }
+    .front {
+      background: linear-gradient(155deg, rgba(255,255,255,0.95), rgba(235,242,230,0.94));
+    }
+
+    .front .seal {
+      width: 84px;
+      height: 84px;
+      margin: 0 auto 18px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--accent);
+      color: white;
+      font-size: 2rem;
+      box-shadow: 0 12px 26px rgba(66, 88, 64, 0.22);
+    }
+
+    .front h3 {
+      margin: 0 0 8px;
+      font-size: 1.8rem;
+    }
+
+    .front p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .back {
+      transform: rotateY(180deg);
+      background: rgba(255,255,255,0.97);
+      justify-content: flex-start;
+      gap: 16px;
+    }
+
+    .result-block {
+      border-radius: 21px;
+      padding: 20px;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+
+    .result-block.no { background: var(--soft-red); }
+    .result-block.yes { background: var(--soft-green); }
 
     .label {
-      margin: 0 0 11px;
+      margin: 0 0 8px;
       text-transform: uppercase;
-      letter-spacing: 0.12em;
-      font-size: 0.75rem;
-      font-weight: 900;
+      letter-spacing: .12em;
+      font-size: .73rem;
+      font-weight: 950;
       color: var(--muted);
     }
 
     .choice {
       margin: 0;
-      font-size: clamp(1.5rem, 5vw, 2.25rem);
-      line-height: 1.16;
+      font-size: clamp(1.35rem, 5vw, 2rem);
+      line-height: 1.18;
       letter-spacing: -0.03em;
       font-weight: 950;
     }
 
-    .accept-panel {
+    .after-reveal {
       display: none;
-      margin-top: 22px;
-      padding: 22px;
-      border-radius: 22px;
-      background: #f1f4ed;
-      border: 1px solid var(--border);
+      margin-top: 20px;
       text-align: center;
     }
 
-    .accept-panel.visible { display: block; }
+    .after-reveal.visible { display: block; }
 
-    .accept-panel p {
-      margin: 0 0 15px;
+    .why-box {
+      display: none;
+      margin-top: 16px;
+      padding: 18px;
+      border-radius: 20px;
+      background: rgba(245, 247, 241, .96);
+      border: 1px solid var(--border);
       color: var(--muted);
-      line-height: 1.5;
+      line-height: 1.55;
+      text-align: left;
     }
+
+    .why-box.visible { display: block; }
 
     .accepted {
       display: none;
-      margin-top: 22px;
+      margin-top: 20px;
       padding: 24px;
-      border-radius: 22px;
+      border-radius: 24px;
       background: var(--accent);
       color: white;
       text-align: center;
-      animation: settle 0.4s ease both;
+      animation: settle .4s ease both;
     }
 
     .accepted.visible { display: block; }
 
-    .accepted h2 {
+    .accepted h3 {
       margin: 0 0 8px;
-      font-size: 1.65rem;
+      font-size: 1.7rem;
     }
 
     .accepted p {
       margin: 0;
       line-height: 1.5;
-      opacity: 0.94;
+      opacity: .95;
     }
 
     .toast {
       min-height: 24px;
-      margin-top: 13px;
+      margin-top: 12px;
       text-align: center;
       color: var(--accent-dark);
-      font-weight: 800;
+      font-weight: 850;
     }
 
     .fine-print {
-      margin: 23px 0 0;
-      color: var(--muted);
-      line-height: 1.5;
+      margin: 22px 0 0;
       text-align: center;
-      font-size: 0.93rem;
+      color: var(--muted);
+      font-size: .91rem;
+      line-height: 1.5;
     }
 
     footer {
-      padding: 18px 28px 24px;
-      text-align: center;
+      position: relative;
+      z-index: 1;
+      padding: 17px 22px 23px;
       color: var(--muted);
-      font-size: 0.85rem;
+      text-align: center;
+      font-size: .84rem;
     }
 
     @keyframes settle {
-      from { opacity: 0; transform: scale(0.98); }
-      to { opacity: 1; transform: scale(1); }
-    }
-
-    @media (min-width: 650px) {
-      .results { grid-template-columns: 1fr 1fr; }
+      from { opacity: 0; transform: translateY(8px) scale(.985); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
     }
 
     @media (max-width: 480px) {
-      body { padding-left: 12px; padding-right: 12px; }
-      header { padding: 29px 20px 21px; }
-      .content { padding: 20px; }
-      .result-card { min-height: 175px; }
+      .content { padding: 22px 17px 27px; }
+      .face { padding: 20px; }
+      .permission-card { min-height: 430px; }
       button { width: 100%; }
     }
   </style>
 </head>
+
 <body>
   <main>
-    <section class="shell">
+    <section class="app-shell">
+      <div class="ambient">
+        <div class="orb one"></div>
+        <div class="orb two"></div>
+      </div>
+
       <header>
-        <p class="eyebrow">A daily boundary</p>
-        <h1>Today's Permission Slip</h1>
-        <p class="subtitle">One thing to release. One thing to enjoy.</p>
-        <div class="date" id="dateLabel"></div>
+        <h1 class="app-name">Permission</h1>
+        <p class="tagline">Your daily boundary.</p>
+        <div class="date-pill" id="dateLabel"></div>
       </header>
 
       <div class="content">
-        <section class="opening" id="opening">
-          <strong>You do not have to earn rest.</strong>
-          <p>Today's plan has already been decided. Once revealed, there are no rerolls and no negotiations.</p>
-        </section>
-
-        <div class="button-row" id="revealRow">
-          <button class="primary" id="revealButton">Reveal today's permission</button>
-        </div>
-
-        <section class="results" id="results" aria-live="polite">
-          <article class="result-card not-allowed">
-            <p class="label">Today you are not allowed to</p>
-            <p class="choice" id="notAllowedChoice"></p>
-          </article>
-
-          <article class="result-card want-you-to">
-            <p class="label">Today I want you to</p>
-            <p class="choice" id="wantChoice"></p>
-          </article>
-        </section>
-
-        <section class="accept-panel" id="acceptPanel">
-          <p>Today's permission has been decided. Your only job now is to honor it.</p>
-          <div class="button-row">
-            <button class="primary" id="acceptButton">I accept today's permission</button>
-            <button class="secondary" id="copyButton">Copy for John</button>
+        <section class="welcome" id="welcome">
+          <h2>You do not have to earn rest.</h2>
+          <p>Today's plan is already set. There are no rerolls and no negotiations.</p>
+          <div class="button-row" id="startRow">
+            <button class="primary" id="startButton">Open today's permission</button>
           </div>
         </section>
 
+        <section class="card-stage" id="cardStage">
+          <div class="permission-card" id="permissionCard">
+            <article class="face front">
+              <div class="seal">✓</div>
+              <h3>Today's Permission</h3>
+              <p>Tap below when you are ready to open it.</p>
+              <div class="button-row">
+                <button class="primary" id="flipButton">Reveal today's plan</button>
+              </div>
+            </article>
+
+            <article class="face back">
+              <div class="result-block no">
+                <p class="label">Today you are not allowed to</p>
+                <p class="choice" id="notAllowedChoice"></p>
+              </div>
+
+              <div class="result-block yes">
+                <p class="label">Today I want you to</p>
+                <p class="choice" id="wantChoice"></p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="after-reveal" id="afterReveal">
+          <div class="button-row">
+            <button class="primary" id="acceptButton">I accept today's permission</button>
+            <button class="secondary" id="whyButton">Why this boundary?</button>
+            <button class="secondary" id="copyButton">Copy results</button>
+          </div>
+
+          <div class="why-box" id="whyBox"></div>
+        </section>
+
         <section class="accepted" id="acceptedPanel">
-          <h2>Permission accepted.</h2>
+          <h3>Permission accepted.</h3>
           <p>Rest is part of the plan today. You are not falling behind by taking care of yourself.</p>
         </section>
 
         <div class="toast" id="toast" role="status"></div>
 
         <p class="fine-print">
-          The daily selections are tied to the date, so they remain the same all day on every device.
+          The daily choices are tied to the date, so they stay the same all day on every device.
         </p>
       </div>
 
@@ -332,12 +427,30 @@
 
   <script>
     const notAllowed = [
-      "Do any coursework",
-      "Look for or apply for any jobs",
-      "Open your unemployment benefits portal",
-      "Do any laundry, dishes, or clean litter boxes",
-      "Open social media or doomscroll",
-      "Eat any junk food"
+      {
+        text: "Do any coursework",
+        why: "Your brain needs recovery time too. One day away from coursework can help you return with more focus."
+      },
+      {
+        text: "Look for or apply for any jobs",
+        why: "A job search does not have to occupy every waking hour. Rest today protects tomorrow's energy."
+      },
+      {
+        text: "Open your unemployment benefits portal",
+        why: "You have already done what you can for now. Checking again today will not make the process move faster."
+      },
+      {
+        text: "Do any laundry, dishes, or clean litter boxes",
+        why: "A home does not need to be perfectly maintained every day. Today, good enough is enough."
+      },
+      {
+        text: "Open social media or doomscroll",
+        why: "Your attention deserves a quieter day. Stepping away can give your nervous system room to settle."
+      },
+      {
+        text: "Eat any junk food",
+        why: "This is not about punishment. It is an invitation to choose food that leaves you feeling cared for."
+      }
     ];
 
     const wantYouTo = [
@@ -349,16 +462,31 @@
       "Prepare a good meal"
     ];
 
+    const themes = [
+      ["#edf3ea", "#faf4e7", "#607b5f", "#425840"],
+      ["#f5efe7", "#eef4f5", "#6f7f86", "#4b5c63"],
+      ["#f1edf6", "#f8f1e9", "#74688b", "#564b6b"],
+      ["#edf5f2", "#f6efe8", "#5f7b72", "#425c55"],
+      ["#f5eee9", "#eef3e8", "#7a6f5f", "#5a5145"],
+      ["#eef1f8", "#f8f1e8", "#687694", "#4c5872"],
+      ["#f1f4ea", "#f8ede8", "#6d7d58", "#4e5e3d"]
+    ];
+
+    const root = document.documentElement;
     const dateLabel = document.getElementById("dateLabel");
-    const revealButton = document.getElementById("revealButton");
-    const revealRow = document.getElementById("revealRow");
-    const results = document.getElementById("results");
+    const startButton = document.getElementById("startButton");
+    const welcome = document.getElementById("welcome");
+    const cardStage = document.getElementById("cardStage");
+    const permissionCard = document.getElementById("permissionCard");
+    const flipButton = document.getElementById("flipButton");
     const notAllowedChoice = document.getElementById("notAllowedChoice");
     const wantChoice = document.getElementById("wantChoice");
-    const acceptPanel = document.getElementById("acceptPanel");
-    const acceptedPanel = document.getElementById("acceptedPanel");
+    const afterReveal = document.getElementById("afterReveal");
     const acceptButton = document.getElementById("acceptButton");
+    const whyButton = document.getElementById("whyButton");
+    const whyBox = document.getElementById("whyBox");
     const copyButton = document.getElementById("copyButton");
+    const acceptedPanel = document.getElementById("acceptedPanel");
     const toast = document.getElementById("toast");
 
     const today = new Date();
@@ -369,6 +497,12 @@
       year: "numeric"
     });
     dateLabel.textContent = prettyDate;
+
+    const theme = themes[today.getDay()];
+    root.style.setProperty("--bg-1", theme[0]);
+    root.style.setProperty("--bg-2", theme[1]);
+    root.style.setProperty("--accent", theme[2]);
+    root.style.setProperty("--accent-dark", theme[3]);
 
     function hashString(text) {
       let hash = 2166136261;
@@ -394,34 +528,51 @@
     const todaysWant =
       wantYouTo[seededIndex(dateKey + "-want", wantYouTo.length)];
 
+    notAllowedChoice.textContent = todaysNotAllowed.text;
+    wantChoice.textContent = todaysWant;
+    whyBox.textContent = todaysNotAllowed.why;
+
+    const openedKey = `permission-opened-${dateKey}`;
     const revealedKey = `permission-revealed-${dateKey}`;
     const acceptedKey = `permission-accepted-${dateKey}`;
 
-    function showResults() {
-      notAllowedChoice.textContent = todaysNotAllowed;
-      wantChoice.textContent = todaysWant;
-      results.classList.add("visible");
-      acceptPanel.classList.add("visible");
-      revealRow.style.display = "none";
+    function openCard() {
+      welcome.style.display = "none";
+      cardStage.classList.add("visible");
+      localStorage.setItem(openedKey, "true");
+    }
+
+    function revealCard() {
+      openCard();
+      permissionCard.classList.add("flipped");
+      afterReveal.classList.add("visible");
       localStorage.setItem(revealedKey, "true");
     }
 
-    function showAccepted() {
-      showResults();
-      acceptPanel.classList.remove("visible");
+    function acceptPermission() {
+      revealCard();
+      afterReveal.classList.remove("visible");
       acceptedPanel.classList.add("visible");
       localStorage.setItem(acceptedKey, "true");
     }
 
-    revealButton.addEventListener("click", showResults);
-    acceptButton.addEventListener("click", showAccepted);
+    startButton.addEventListener("click", openCard);
+    flipButton.addEventListener("click", revealCard);
+    acceptButton.addEventListener("click", acceptPermission);
+
+    whyButton.addEventListener("click", () => {
+      whyBox.classList.toggle("visible");
+      whyButton.textContent = whyBox.classList.contains("visible")
+        ? "Hide explanation"
+        : "Why this boundary?";
+    });
 
     copyButton.addEventListener("click", async () => {
       const message =
-`Today's Permission Slip — ${prettyDate}
+`Today's Permission — ${prettyDate}
 
 Today you are not allowed to:
-${todaysNotAllowed}
+${todaysNotAllowed.text}
 
 Today I want you to:
 ${todaysWant}
@@ -443,9 +594,11 @@ No rerolls. No negotiations.`;
     });
 
     if (localStorage.getItem(acceptedKey) === "true") {
-      showAccepted();
+      acceptPermission();
     } else if (localStorage.getItem(revealedKey) === "true") {
-      showResults();
+      revealCard();
+    } else if (localStorage.getItem(openedKey) === "true") {
+      openCard();
     }
 
     if ("serviceWorker" in navigator) {
